@@ -1,0 +1,59 @@
+Installation
+============
+
+To use HPO, you must first install Python3. 
+
+In case you prefer convenient access to the source code and examples, you have the option to install HPO through cloning the HPO/Hyperparameter-Optimization::
+
+    git clone https://github.com/ComputationalDesignLab/Hyperparameter-Optimization.git
+
+Then, open the terminal and ``cd`` into the downloaded repository and pip install the package::
+
+    pip install -e .
+
+This will install the package in editable mode. If you change anything in the source code of the package, then you don't need to re-install the package.
+
+.. note::
+
+	Or you can just download the zip file and extract
+
+Open the terminal and ``cd`` into the cloned repository and run::
+
+    git pull
+
+
+Requirements
+------------------------------------
+
+IFEWs model depends external packages to do hyperparameter optimization. 
+The following packages are required to download
+
+#. Ax
+#. Hpbandster
+#. Sklearn
+#. Numpy
+#. Pandas
+#. scipy
+#. Tensorflow
+#. Matplotlib
+
+.. note::
+
+   Numpy and Pandas will be automatically installed along with scikit-learn because they are dependencies of Sklearn.
+
+.. note::
+
+   Matplotlib is for plotting the result.
+   
+Installation instructions:
+You can simply download the requirements by using ``pip`` from your python environment (we recommend Anaconda).
+
+Examples are::
+
+	pip install ax-platform
+
+	pip install scikit-learn
+	
+To ensure the installation of optional dependencies, use the ``[all]`` suffix with the install command. However, it is not necessary for a basic installation.
+
+
