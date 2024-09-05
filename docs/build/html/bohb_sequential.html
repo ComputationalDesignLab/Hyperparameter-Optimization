@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bayesian Optimization Hyperband (Sequential) &mdash; Hyperparameter Optimization 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="canonical" href="https://pjt359100.github.io/sphinx_example/bohb_sequential.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Imported Funcion (Sequential)" href="imp_function_sequential.html" />
+    <link rel="prev" title="HPO (Sequential)" href="HPO_sequential.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Hyperparameter Optimization
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="problem_formulation.html">Problem Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_oneshot.html">HPO (One-shot)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="HPO_sequential.html">HPO (Sequential)</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Bayesian Optimization Hyperband (Sequential)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imp_function_sequential.html">Imported Funcion (Sequential)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_reference.html">Additional Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Hyperparameter Optimization</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="HPO_sequential.html">HPO (Sequential)</a></li>
+      <li class="breadcrumb-item active">Bayesian Optimization Hyperband (Sequential)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bohb_sequential.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bayesian-optimization-hyperband-sequential">
+<h1>Bayesian Optimization Hyperband (Sequential)<a class="headerlink" href="#bayesian-optimization-hyperband-sequential" title="Link to this heading"></a></h1>
+<p>Within the EGONN framework, different HP tuning frequencies are explored: maintaining initially tuned HPs (<code class="docutils literal notranslate"><span class="pre">HPO-static</span></code>), tuning every five iterations (<code class="docutils literal notranslate"><span class="pre">HPO-5itr</span></code>), and tuning every iteration (<code class="docutils literal notranslate"><span class="pre">HPO-1itr</span></code>). These strategies aim to balance dynamic HP adjustments with time efficiency. HPO is conducted using <strong>Bayesian optimization Hyperband</strong>, building on the successful application of <strong>Bayesian optimization Hyperband</strong> in the one-shot method with the two-dimensional Branin function.</p>
+<p>The EGONN method starts with an initial sample size of 10 and adds 45 infill points, using a Halton sequence to ensure consistent starting points.
+The study compares various HPO strategies within EGONN against the traditional EGO method as a benchmark.
+Initially, all HPs are optimized, followed by a focused optimization of a subset based on preliminary findings.
+The evaluation highlights convergence performance and time efficiency across the methods</p>
+<p>The following piece of code offers an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">imp_functions_bohb_workers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">scipy.io</span> <span class="kn">import</span> <span class="n">savemat</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">qmc</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">hpbandster.core.nameserver</span> <span class="k">as</span> <span class="nn">hpns</span>
+
+<span class="c1">#logging.WARNING has less log</span>
+<span class="c1"># logging.basicConfig(level=logging.DEBUG)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;hpbandster&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+
+<span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--train_size&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--budget&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--runs&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--n_workers&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="c1"># Setting bohb parameters</span>
+<span class="n">iteration</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">min_b</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">max_b</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="c1"># Number of points/dim</span>
+<span class="n">num_dim</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># no of dimensions</span>
+<span class="n">num_mean_var</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">num_mean</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">num_var</span> <span class="o">=</span> <span class="n">num_mean_var</span> <span class="o">-</span> <span class="n">num_mean</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">budget</span> <span class="c1"># Maximum number of iterations/infill points</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;###############################################&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean training size: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_mean</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance training size: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_var</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Budget: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">budget</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parallel worker size: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_workers</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;###############################################&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Bounds</span>
+<span class="n">ub</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="c1"># upper bounds for both dimensions</span>
+<span class="n">lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="c1"># lower bounds for both dimensions</span>
+
+<span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lb</span><span class="p">)):</span>
+    <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lb</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+<span class="n">u_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">l_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">sampler_mean_var</span>  <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">Halton</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">num_dim</span><span class="p">,</span> <span class="n">scramble</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">sample_mean_var</span> <span class="o">=</span> <span class="n">sampler_mean_var</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">num_mean_var</span><span class="p">)</span>
+<span class="n">x_mean_var</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">sample_mean_var</span><span class="p">,</span> <span class="n">l_bounds</span><span class="p">,</span> <span class="n">u_bounds</span><span class="p">)</span>
+
+<span class="n">x_mean</span> <span class="o">=</span> <span class="n">x_mean_var</span><span class="p">[:</span><span class="n">num_mean</span><span class="p">]</span>
+<span class="n">y_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">HARTMANN3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_mean</span><span class="p">])</span>
+
+<span class="n">x_var</span> <span class="o">=</span> <span class="n">x_mean_var</span><span class="p">[</span><span class="n">num_mean</span><span class="p">:]</span>
+<span class="n">y_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">HARTMANN3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_var</span><span class="p">])</span>
+
+<span class="c1"># Storing the data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x_mean</span><span class="p">,</span>
+    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y_mean</span>
+<span class="p">}</span>
+
+<span class="c1"># Saving the data</span>
+<span class="n">savemat</span><span class="p">(</span><span class="s1">&#39;doe.mat&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="n">training_nrmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">training_nrmse_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">training_nrmse_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">store_times</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">activation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">neuron</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">var_activation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_epoch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_neuron</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">var_learning_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_activation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_epoch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">var_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">budget</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1">#                               EGONN Loop</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+<span class="c1"># n = 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="k">for</span> <span class="n">itr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">budget</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Infill iteration: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing hyperparameters and training mean NN&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1">######### Train the mean NN</span>
+
+    <span class="k">if</span> <span class="n">itr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># if itr % n == 0:</span>
+
+        <span class="c1"># Split the training data into training and cross-validation data</span>
+        <span class="n">x_train</span><span class="p">,</span> <span class="n">x_cv</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_cv</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="c1"># Serialize training data to pass to workers</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;x_train&#39;</span><span class="p">:</span> <span class="n">x_train</span><span class="p">,</span>
+            <span class="s1">&#39;y_train&#39;</span><span class="p">:</span> <span class="n">y_train</span><span class="p">,</span>
+            <span class="s1">&#39;x_cv&#39;</span><span class="p">:</span> <span class="n">x_cv</span><span class="p">,</span>
+            <span class="s1">&#39;y_cv&#39;</span><span class="p">:</span> <span class="n">y_cv</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;train_data.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Start a nameserver</span>
+        <span class="n">NS</span> <span class="o">=</span> <span class="n">hpns</span><span class="o">.</span><span class="n">NameServer</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="s1">&#39;bohb&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">NS</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Start worker processes using subprocess</span>
+        <span class="n">worker_processes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_workers</span><span class="p">):</span>
+            <span class="c1"># Open imp_function located in two level up from the current directory</span>
+            <span class="n">worker_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;python ../../imp_functions_bohb_workers.py --run_id bohb --host 127.0.0.1 --worker </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">worker_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">worker_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="c1"># Give workers some time to start up and register</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># Run hpbandster</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">run_hpbandster</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_cv</span><span class="p">,</span> <span class="n">y_cv</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">min_b</span><span class="p">,</span> <span class="n">max_b</span><span class="p">)</span>
+
+        <span class="c1"># Extract the best configuration</span>
+        <span class="n">best_config</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_id2config_mapping</span><span class="p">()[</span><span class="n">res</span><span class="o">.</span><span class="n">get_incumbent_id</span><span class="p">()][</span><span class="s1">&#39;config&#39;</span><span class="p">]</span>
+        <span class="n">best_loss</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_runs_by_id</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get_incumbent_id</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+        <span class="n">best_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">best_loss</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best objective (loss for training + CV): </span><span class="si">{</span><span class="n">best_loss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best hyperparameters: </span><span class="si">{</span><span class="n">best_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">opt_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;num_epochs&quot;</span><span class="p">:</span> <span class="n">best_config</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;activation&quot;</span><span class="p">:</span> <span class="n">best_config</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;num_hidden_layers&quot;</span><span class="p">:</span> <span class="n">best_config</span><span class="p">[</span><span class="s2">&quot;layer&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;num_neurons&quot;</span><span class="p">:</span> <span class="n">best_config</span><span class="p">[</span><span class="s2">&quot;neuron&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Get the model</span>
+        <span class="n">mean_NN</span><span class="p">,</span> <span class="n">x_transform</span><span class="p">,</span> <span class="n">y_transform</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">opt_params</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mean_NN</span><span class="p">,</span> <span class="n">x_transform</span><span class="p">,</span> <span class="n">y_transform</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">opt_params</span><span class="p">)</span>
+
+
+    <span class="c1">########## Train the var NN</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing hyperparameters and training var NN&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Predict value at x_mean</span>
+    <span class="n">y_mean_pred</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_transform</span><span class="p">,</span> <span class="n">y_transform</span><span class="p">,</span> <span class="n">mean_NN</span><span class="p">)</span>
+    <span class="c1"># Calculate the error (s2) for first dataset</span>
+    <span class="n">error_mean</span> <span class="o">=</span> <span class="n">y_mean</span> <span class="o">-</span> <span class="n">y_mean_pred</span>
+    <span class="c1"># Rescaling the predicted y at x_var for calculating the error</span>
+    <span class="n">y_var_pred</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">x_var</span><span class="p">,</span> <span class="n">x_transform</span><span class="p">,</span> <span class="n">y_transform</span><span class="p">,</span> <span class="n">mean_NN</span><span class="p">)</span>
+    <span class="c1"># Calculate the error (s2) for second dataset</span>
+    <span class="n">error_var</span> <span class="o">=</span> <span class="n">y_var</span> <span class="o">-</span> <span class="n">y_var_pred</span>
+    <span class="c1"># Stack the error data</span>
+    <span class="n">s2_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">error_mean</span><span class="p">,</span> <span class="n">error_var</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">itr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># if itr % n == 0:</span>
+
+        <span class="c1"># Split the training data into training and cross-validation data</span>
+        <span class="n">x_train</span><span class="p">,</span> <span class="n">x_cv</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_cv</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_var</span><span class="p">)),</span> <span class="n">s2_var</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="c1"># Serialize training data to pass to workers</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;x_train&#39;</span><span class="p">:</span> <span class="n">x_train</span><span class="p">,</span>
+            <span class="s1">&#39;y_train&#39;</span><span class="p">:</span> <span class="n">y_train</span><span class="p">,</span>
+            <span class="s1">&#39;x_cv&#39;</span><span class="p">:</span> <span class="n">x_cv</span><span class="p">,</span>
+            <span class="s1">&#39;y_cv&#39;</span><span class="p">:</span> <span class="n">y_cv</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;train_data.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Start a nameserver</span>
+        <span class="n">NS</span> <span class="o">=</span> <span class="n">hpns</span><span class="o">.</span><span class="n">NameServer</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="s1">&#39;bohb&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">NS</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Start worker processes using subprocess</span>
+        <span class="n">worker_processes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_workers</span><span class="p">):</span>
+            <span class="c1"># Open imp_function located in two level up from the current directory</span>
+            <span class="n">worker_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;python ../../imp_functions_bohb_workers.py --run_id bohb --host 127.0.0.1 --worker </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">worker_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">worker_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="c1"># Give workers some time to start up and register</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># Run hpbandster</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">run_hpbandster</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_cv</span><span class="p">,</span> <span class="n">y_cv</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">min_b</span><span class="p">,</span> <span class="n">max_b</span><span class="p">)</span>
+
+        <span class="c1"># Extract the best configuration</span>
+        <span class="n">best_config_var</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_id2config_mapping</span><span class="p">()[</span><span class="n">res</span><span class="o">.</span><span class="n">get_incumbent_id</span><span class="p">()][</span><span class="s1">&#39;config&#39;</span><span class="p">]</span>
+        <span class="n">best_loss_var</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_runs_by_id</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get_incumbent_id</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+        <span class="n">best_loss_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">best_loss_var</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best objective (loss for training + CV): </span><span class="si">{</span><span class="n">best_loss_var</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best hyperparameters: </span><span class="si">{</span><span class="n">best_config_var</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">opt_params_var</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;num_epochs&quot;</span><span class="p">:</span> <span class="n">best_config_var</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;activation&quot;</span><span class="p">:</span> <span class="n">best_config_var</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;num_hidden_layers&quot;</span><span class="p">:</span> <span class="n">best_config_var</span><span class="p">[</span><span class="s2">&quot;layer&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;num_neurons&quot;</span><span class="p">:</span> <span class="n">best_config_var</span><span class="p">[</span><span class="s2">&quot;neuron&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Get the model</span>
+        <span class="n">var_NN</span><span class="p">,</span> <span class="n">x_s2_transform</span><span class="p">,</span> <span class="n">s2_transform</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_var</span><span class="p">)),</span> <span class="n">s2_var</span><span class="p">,</span> <span class="n">opt_params_var</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">var_NN</span><span class="p">,</span> <span class="n">x_s2_transform</span><span class="p">,</span> <span class="n">s2_transform</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_var</span><span class="p">)),</span> <span class="n">s2_var</span><span class="p">,</span> <span class="n">opt_params_var</span><span class="p">)</span>
+
+    <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">times_bohb</span> <span class="o">=</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span>
+    <span class="n">store_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">times_bohb</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Elapsed time for HPO : </span><span class="si">{</span><span class="n">times_bohb</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Transform the data</span>
+    <span class="n">x_train</span> <span class="o">=</span> <span class="n">x_transform</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+    <span class="c1"># Predict at training data</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">mean_NN</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+    <span class="c1"># Transform back to original scale</span>
+    <span class="n">x_train</span> <span class="o">=</span> <span class="n">x_transform</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_transform</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">training_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">y_train</span><span class="p">))</span>
+
+    <span class="n">s2_var_pred</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_var</span><span class="p">)),</span> <span class="n">x_s2_transform</span><span class="p">,</span> <span class="n">s2_transform</span><span class="p">,</span> <span class="n">var_NN</span><span class="p">)</span>
+    <span class="n">training_loss_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_mean</span><span class="p">,</span> <span class="n">y_mean_pred</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">y_mean</span><span class="p">))</span>
+    <span class="n">training_loss_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">s2_var</span><span class="p">,</span> <span class="n">s2_var_pred</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">s2_var</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training NRMSE for mean NN: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">training_loss</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training NRMSE2 for mean NN: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">training_loss_mean</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training NRMSE for var NN: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">training_loss_var</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># ----------------------------------------------------------------------------</span>
+    <span class="c1">#                           Minimizing the EI</span>
+    <span class="c1"># ----------------------------------------------------------------------------</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## Adding Infill </span><span class="si">{}</span><span class="s2"> of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">budget</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Finding feasible y_min req for EI calculation</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y_mean</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_mean</span> <span class="o">==</span> <span class="n">ymin</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">x_mean</span><span class="p">[</span><span class="n">index</span><span class="p">,:]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best objective found: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ymin</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best objective found at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xmin</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1">######### Optimize the expected improvement</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maximizing EI&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Maximize the EI</span>
+    <span class="n">ei_opt</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">differential_evolution</span><span class="p">(</span><span class="n">expectedImprovement</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">popsize</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mutation</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">recombination</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_transform</span><span class="p">,</span> <span class="n">y_transform</span><span class="p">,</span> <span class="n">x_s2_transform</span><span class="p">,</span> <span class="n">s2_transform</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">mean_NN</span><span class="p">,</span> <span class="n">var_NN</span><span class="p">),</span> <span class="n">polish</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Computing function value at new x</span>
+    <span class="n">x_new</span> <span class="o">=</span> <span class="n">ei_opt</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#f_new = HARTMANN3(x_new).reshape(1,-1)</span>
+    <span class="n">f_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">HARTMANN3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_new</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New infill point: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ei_opt</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;max EI: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">-</span><span class="n">ei_opt</span><span class="o">.</span><span class="n">fun</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># ----------------------------------------------------------------------------</span>
+    <span class="c1">#                               Save the data</span>
+    <span class="c1"># ----------------------------------------------------------------------------</span>
+
+    <span class="c1"># Storing the ei_opt and corresponding x</span>
+    <span class="k">if</span> <span class="n">itr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x_ei_optimums</span> <span class="o">=</span> <span class="n">ei_opt</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_ei_optimums</span> <span class="o">=</span> <span class="o">-</span><span class="n">ei_opt</span><span class="o">.</span><span class="n">fun</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x_ei_optimums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_ei_optimums</span><span class="p">,</span> <span class="n">ei_opt</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">y_ei_optimums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_ei_optimums</span><span class="p">,</span> <span class="o">-</span><span class="n">ei_opt</span><span class="o">.</span><span class="n">fun</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+
+    <span class="k">if</span> <span class="n">itr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x_min_data</span> <span class="o">=</span> <span class="n">xmin</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_min_data</span> <span class="o">=</span> <span class="n">ymin</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x_min_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_min_data</span><span class="p">,</span> <span class="n">xmin</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">y_min_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_min_data</span><span class="p">,</span> <span class="n">ymin</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+
+    <span class="c1"># Appending the data for next iteration</span>
+    <span class="n">x_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">x_new</span><span class="p">))</span>
+    <span class="n">y_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">y_mean</span><span class="p">,</span> <span class="n">f_new</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">itr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># if itr % n == 0:</span>
+
+        <span class="n">epoch</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params</span><span class="p">[</span><span class="s1">&#39;num_epochs&#39;</span><span class="p">]</span>
+        <span class="n">activation</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">]</span>
+        <span class="n">layer</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params</span><span class="p">[</span><span class="s1">&#39;num_hidden_layers&#39;</span><span class="p">]</span>
+        <span class="n">neuron</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params</span><span class="p">[</span><span class="s1">&#39;num_neurons&#39;</span><span class="p">]</span>
+
+        <span class="n">var_epoch</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params_var</span><span class="p">[</span><span class="s1">&#39;num_epochs&#39;</span><span class="p">]</span>
+        <span class="n">var_activation</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params_var</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">]</span>
+        <span class="n">var_layer</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params_var</span><span class="p">[</span><span class="s1">&#39;num_hidden_layers&#39;</span><span class="p">]</span>
+        <span class="n">var_neuron</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt_params_var</span><span class="p">[</span><span class="s1">&#39;num_neurons&#39;</span><span class="p">]</span>
+
+        <span class="n">training_nrmse</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">training_loss</span>
+        <span class="n">training_nrmse_mean</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">training_loss_mean</span>
+        <span class="n">training_nrmse_var</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">training_loss_var</span>
+
+        <span class="n">loss</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_loss</span>
+        <span class="n">var_loss</span><span class="p">[</span><span class="n">itr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_loss_var</span>
+
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;x_data_min&#39;</span><span class="p">:</span> <span class="n">x_min_data</span><span class="p">,</span>
+        <span class="s1">&#39;f_data_min&#39;</span><span class="p">:</span> <span class="n">y_min_data</span><span class="p">,</span>
+        <span class="s1">&#39;xei&#39;</span><span class="p">:</span> <span class="n">x_ei_optimums</span><span class="p">,</span>
+        <span class="s1">&#39;yei&#39;</span><span class="p">:</span> <span class="n">y_ei_optimums</span><span class="p">,</span>
+        <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y_mean</span><span class="p">,</span>
+        <span class="s2">&quot;activation&quot;</span><span class="p">:</span> <span class="n">activation</span><span class="p">,</span>
+        <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span>
+        <span class="s2">&quot;layer&quot;</span><span class="p">:</span> <span class="n">layer</span><span class="p">,</span>
+        <span class="s2">&quot;neuron&quot;</span><span class="p">:</span> <span class="n">neuron</span><span class="p">,</span>
+        <span class="s2">&quot;var_activation&quot;</span><span class="p">:</span> <span class="n">var_activation</span><span class="p">,</span>
+        <span class="s2">&quot;var_epoch&quot;</span><span class="p">:</span> <span class="n">var_epoch</span><span class="p">,</span>
+        <span class="s2">&quot;var_layer&quot;</span><span class="p">:</span> <span class="n">var_layer</span><span class="p">,</span>
+        <span class="s2">&quot;var_neuron&quot;</span><span class="p">:</span> <span class="n">var_neuron</span><span class="p">,</span>
+        <span class="s2">&quot;training_nrmse_mean&quot;</span><span class="p">:</span> <span class="n">training_nrmse</span><span class="p">,</span>
+        <span class="s2">&quot;training_nrmse_var&quot;</span><span class="p">:</span> <span class="n">training_nrmse_var</span><span class="p">,</span>
+        <span class="s2">&quot;training_nrmse_mean2&quot;</span><span class="p">:</span> <span class="n">training_nrmse_mean</span><span class="p">,</span>
+        <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">store_times</span><span class="p">,</span>
+        <span class="s2">&quot;var_loss&quot;</span> <span class="p">:</span> <span class="n">var_loss</span><span class="p">,</span>
+        <span class="s2">&quot;loss&quot;</span> <span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">savemat</span><span class="p">(</span><span class="s2">&quot;result.mat&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Shutdown the optimizer and nameserver</span>
+    <span class="n">NS</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+    <span class="c1"># Terminate worker processes</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">worker_processes</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to test HPO-static, you should set <strong>if loop</strong> as <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">itr</span> <span class="pre">%</span> <span class="pre">n</span> <span class="pre">==</span> <span class="pre">0:</span></code>. If you want to test HPO-1itr and HPO-5itr, you should set <strong>n</strong> in line 101 and set <strong>if loop</strong> as <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">itr</span> <span class="pre">==</span> <span class="pre">0:</span></code>.</p>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="HPO_sequential.html" class="btn btn-neutral float-left" title="HPO (Sequential)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="imp_function_sequential.html" class="btn btn-neutral float-right" title="Imported Funcion (Sequential)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, CODE Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
