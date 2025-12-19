@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualization &mdash; Hyperparameter Optimization 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="canonical" href="https://pjt359100.github.io/sphinx_example/visualization.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Additional Reference" href="user_reference.html" />
+    <link rel="prev" title="Imported Funcion (Sequential)" href="imp_function_sequential.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Hyperparameter Optimization
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problem_formulation.html">Problem Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_oneshot.html">HPO (One-shot)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_sequential.html">HPO (Sequential)</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#one-shot-method">One-shot Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sequential-sampling">Sequential Sampling</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_reference.html">Additional Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Hyperparameter Optimization</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Visualization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/visualization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="visualization">
+<h1>Visualization<a class="headerlink" href="#visualization" title="Link to this heading"></a></h1>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Oneshot</span></code> and <code class="docutils literal notranslate"><span class="pre">Sequential</span></code> folders, there are <code class="docutils literal notranslate"><span class="pre">Plot</span></code> directories containing Python scripts for generating various types of plots.
+These <strong>Python files</strong> can be used after replacing the default data folders with your own datasets. Each script offers multiple plotting options,
+allowing for customizable visualizations. Below is a summary of the Python scripts and their functionalities:</p>
+<section id="one-shot-method">
+<h2>One-shot Method<a class="headerlink" href="#one-shot-method" title="Link to this heading"></a></h2>
+<ul>
+<li><dl class="simple">
+<dt><strong>Python Files</strong>:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">compare_Box.py</span></code>: This script generates box plots to compare the performance of different HPO methods, tested ten times independently. It plots key metrics, including:</dt><dd><ul>
+<li><p>Optimum found using the NN</p></li>
+<li><p>Loss function value</p></li>
+<li><p>Time cost</p></li>
+<li><p>All of the above are plotted versus the number of samples (10, 20, 30, 40, and 50).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">HP_Box.py</span></code>: This script generates box plots showing the optimum hyperparameter values, such as:</dt><dd><ul>
+<li><p>Number of neurons</p></li>
+<li><p>Number of layers</p></li>
+<li><p>Epoch size</p></li>
+<li><p>Activation function</p></li>
+<li><p>These are plotted versus the number of samples (10, 20, 30, 40, 50).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Example Plots</strong>:</dt><dd><ul class="simple">
+<li><p>The box plots created by both scripts allow for visualizing trends in the data by accounting for the randomness of NN behavior. These plots summarize the results of testing the HPO methods ten times independently.</p></li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>Optimization Performance:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/Converge_box_f.png"><img alt="optimum convergence history" src="_images/Converge_box_f.png" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/Converge_box_loss.png"><img alt="loss convergence history" src="_images/Converge_box_loss.png" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/Converge_box_time.png"><img alt="time convergence history" src="_images/Converge_box_time.png" style="width: 600px;" />
+</a>
+<ul class="simple">
+<li><p>Hyperparameter Convergence:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/HP_box_activation.png"><img alt="HP activation convergence history" src="_images/HP_box_activation.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/HP_box_layer.png"><img alt="HP layer convergence history" src="_images/HP_box_layer.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/HP_box_neuron.png"><img alt="HP neuron convergence history" src="_images/HP_box_neuron.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/HP_box_epoch.png"><img alt="HP epoch convergence history" src="_images/HP_box_epoch.png" style="width: 400px;" />
+</a>
+</li>
+</ul>
+</section>
+<section id="sequential-sampling">
+<h2>Sequential Sampling<a class="headerlink" href="#sequential-sampling" title="Link to this heading"></a></h2>
+<ul>
+<li><dl class="simple">
+<dt><strong>Python Files</strong>:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">MeanVariancePlot.py</span></code>: This script generates mean and variance plots, where solid lines represent mean values and shaded areas indicate one standard deviation. The key metrics plotted include:</dt><dd><ul>
+<li><p>Optimum found using the NN</p></li>
+<li><p>Loss function value</p></li>
+<li><p>Time cost</p></li>
+<li><p>Optionally, time cost can be placed on the x-axis to compare methods in terms of efficiency.</p></li>
+<li><p>These are plotted versus the number of infill samples added (10 to 55 samples).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">HP_MeanVariancePlot.py</span></code>: This script generates mean and variance plots for hyperparameters such as:</dt><dd><ul>
+<li><p>Number of neurons</p></li>
+<li><p>Number of layers</p></li>
+<li><p>Epoch size</p></li>
+<li><p>Activation function</p></li>
+<li><p>These are plotted versus the number of infill samples (10 to 55).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Example Plots</strong>:</dt><dd><ul class="simple">
+<li><p>The mean and variance plots illustrate trends by showing the average performance and variability across ten independent tests. The shaded area helps to visualize the range of variability in the results.</p></li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>Optimization Performance:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/optimumVSitr.png"><img alt="optimum convergence history (sequential)" src="_images/optimumVSitr.png" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/optimumVStime.png"><img alt="optimum convergence history vs time (sequential)" src="_images/optimumVStime.png" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/lossVSitr.png"><img alt="time convergence history (sequential)" src="_images/lossVSitr.png" style="width: 600px;" />
+</a>
+<ul class="simple">
+<li><p>Hyperparameter Convergence:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/activationVSitr.png"><img alt="HP activation convergence history (sequential)" src="_images/activationVSitr.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/layerVSitr.png"><img alt="HP layer convergence history (sequential)" src="_images/layerVSitr.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/neuronVSitr.png"><img alt="HP neuron convergence history (sequential)" src="_images/neuronVSitr.png" style="width: 400px;" />
+</a>
+<a class="reference internal image-reference" href="_images/epochVSitr.png"><img alt="HP epoch convergence history (sequential)" src="_images/epochVSitr.png" style="width: 400px;" />
+</a>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="imp_function_sequential.html" class="btn btn-neutral float-left" title="Imported Funcion (Sequential)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_reference.html" class="btn btn-neutral float-right" title="Additional Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, CODE Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

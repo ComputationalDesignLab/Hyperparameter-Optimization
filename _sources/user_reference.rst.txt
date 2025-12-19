@@ -1,0 +1,49 @@
+Additional Reference
+========================
+
+Additional references that might be helpful to understand the hyperparameter optimization and the coding provided in this documentation.
+
+------------------------
+Documentations 
+------------------------
+
+Here are the URLs for the documentation of the libraries and algorithms used in this research, covering mathematical tools, plotting tools, and optimization algorithms:
+
+- **Numpy** : https://numpy.org/
+
+- **Pandas** : https://pandas.pydata.org/
+
+- **Hpbandster**: https://automl.github.io/HpBandSter/build/html/quickstart.html 
+
+- **Ax** : https://ax.dev/ 
+
+- **Matplotlib** : https://matplotlib.org/ 
+
+- **Scipy** : https://scipy.org/ 
+
+- **Sklearn** : https://scikit-learn.org/stable/ 
+
+- **Tensorflow** : https://www.tensorflow.org/ 
+
+	
+------------------------
+Papers 
+------------------------
+
+There are three papers and one Master’s thesis published on hyperparameter optimization (HPO), listed chronologically from oldest to newest. 
+
+- **First Paper** :
+
+Jeong, T., Koratikere, P., & Leifsson, L. T. (2024). Automated Hyperparameter Tuning for Airfoil Shape Optimization with Neural Network Models. In AIAA SCITECH 2024 Forum (p. 2671). https://doi.org/10.2514/6.2024-2671
+
+- **Second Paper** :
+
+Jeong, T., Koratikere, P., Leifsson, L., Koziel, S., & Pietrenko-Dabrowska, A. (2024, June). Adaptive Hyperparameter Tuning Within Neural Network-Based Efficient Global Optimization. In International Conference on Computational Science (pp. 74-89). Cham: Springer Nature Switzerland. https://doi.org/10.1007/978-3-031-63775-9_6
+
+- **Master's Thesis** :
+
+`Taeho Jeong's Thesis <https://hammer.purdue.edu/authors/Taeho_Jeong/18437064>`_. 
+
+- **Third Paper** (Not yet published):
+
+Jeong, T., Koratikere, P., & Leifsson, L. T. (2024). Adaptive Hyperparameter Optimization Strategies for Neural Network Models in Engineering Design Optimization

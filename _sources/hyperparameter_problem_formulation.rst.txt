@@ -1,0 +1,18 @@
+HPO Problem Formulation
+=====================================
+
+HPs in NNs must be determined before training starts since they govern the learning process and cannot be adjusted during training. 
+As such, HPO is conducted during the NN construction phase. 
+The goal of HPO is to minimize the loss function of NN predictions on the validation set by tuning HPs :math:`\mathbf{x} = (x_1, x_2, ..., x_6)`, where each :math:`x_i` corresponds to a specific HP. The optimization is expressed as:
+
+.. math::
+
+    \mathbf{x}^* = \arg\min_{\mathbf{x} \in \chi} \mathcal{L}(\mathbf{x}),
+
+where :math:`\mathbf{x}^*` are the optimal HP values, :math:`\chi` is the HP domain, and :math:`\mathcal{L}(\mathbf{x})` is the loss function. In this work, the root mean squared error (RMSE) is used as the loss function, defined as:
+
+.. math::
+
+    \mathcal{L}(\mathbf{x}) = \sqrt{ \frac{\sum_{i=1}^{n_v} \left[f(\mathbf{x}_d^{(i)}) - \hat{f}(\mathbf{x}, \mathbf{x}_d^{(i)})\right]^2}{n_v} },
+
+where :math:`n_v` is the number of validation data points, :math:`\mathbf{x}_d` represents design variables, :math:`f(\mathbf{x}_d)` is the actual observation, and :math:`\hat{f}(\mathbf{x}, \mathbf{x}_d)` is the predicted output using HPs :math:`\mathbf{x}`. The HPO concludes once the RMSE is minimized to meet a convergence criterion, such as a maximum number of evaluations or achieving a target RMSE threshold.

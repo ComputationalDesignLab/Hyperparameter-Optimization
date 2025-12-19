@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hyperparameter Optimization (HPO) &mdash; Hyperparameter Optimization 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="canonical" href="https://pjt359100.github.io/sphinx_example/index.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Hyperparameter Optimization
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problem_formulation.html">Problem Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_oneshot.html">HPO (One-shot)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_sequential.html">HPO (Sequential)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_reference.html">Additional Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Hyperparameter Optimization</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hyperparameter Optimization (HPO)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hyperparameter-optimization-hpo">
+<h1>Hyperparameter Optimization (HPO)<a class="headerlink" href="#hyperparameter-optimization-hpo" title="Link to this heading"></a></h1>
+<p>Engineering design optimization frequently relies on physics-based models and simulations, which can be computationally expensive due to iterative evaluations.
+Surrogate models, which act as proxies for the full models, can significantly reduce computational demands while maintaining acceptable accuracy.
+Two main approaches to developing surrogate models are one-shot and sequential sampling.
+One-shot sampling involves generating a data set from a predefined number of samples to fit a surrogate model,
+while sequential sampling iteratively refines the surrogate by adding samples in areas of interest, improving accuracy.</p>
+<p>Several methods exist for surrogate modeling, including polynomial regression, kriging, radial basis functions, and neural networks (NNs).
+Kriging is popular for sequential sampling due to its ability to provide both predictions and uncertainty estimates,
+but it becomes computationally expensive with large data sets and high-dimensional spaces.
+NNs, while capable of handling large, nonlinear data sets, traditionally lack direct uncertainty estimation,
+which is crucial for balancing exploration and exploitation in optimization.</p>
+<a class="reference internal image-reference" href="_images/HP.png"><img alt="Alternative text" src="_images/HP.png" style="width: 500px;" />
+</a>
+<p class="centered">
+<strong><strong>Figure 1 : Neural network with hyperparameter</strong></strong></p><p>HPO is essential for improving NN performance and efficiency, especially in dynamic environments like sequential sampling.
+Traditional HPO methods, such as grid and random search, are simple but often inefficient for large search spaces.
+Advanced HPO strategies are needed to navigate the hyperparameter (HP) space more effectively.
+The documentation considers HPO strategies for NNs in both one-shot sampling and sequential sampling in surrogate-based optimization (SBO).
+The evaluation focuses on metrics like time cost, the quality of the converged optimum, and the sample size required for convergence.
+For the HPO in sequential sampling, a predetermined number of samples will dictate the number of iterations.
+As the NN identifies an optimum using the current training dataset, this optimum is added to the training set,
+and the NN’s HPs are adjusted sequentially. This iterative process continues, refining the NN’s predictions and narrowing the design space.</p>
+<a class="reference internal image-reference" href="_images/Intro.PNG"><img alt="Alternative text" src="_images/Intro.PNG" style="width: 600px;" />
+</a>
+<p class="centered">
+<strong><strong>Figure 2 : Adatively tuning hyperparameters of neural network in sequential sampling</strong></strong></p><p>Additionally, intermittent adaptive HPO is explored to addresses the potential limitations of sequential sampling,
+such as the minor impact of single infill points on optimization results.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>The initial pages of the documentation provide a thorough explanation of the setup and basic instructions of required packages.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#requirements">Requirements</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="hpo">
+<h2>HPO<a class="headerlink" href="#hpo" title="Link to this heading"></a></h2>
+<p>After you have successfully set up the requirements and examined the fundamental guides, you can progress to explore HPO with several independent subsystems presented below.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problem_formulation.html">Problem Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hyperparameter.html">Hyperparameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hyperparameter_problem_formulation.html">HPO Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testcases.html">Test Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testcases.html#one-shot-method-branin-function">One-shot method - Branin function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testcases.html#sequential-sampling-method-hartmann-function">Sequential sampling method - Hartmann function</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_oneshot.html">HPO (One-shot)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gs.html">Grid Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rs.html">Random Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hb.html">Hyperband</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bohb.html">Bayesian Optimization Hyperband</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imp_function_oneshot.html">Imported Funcion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="imp_function_oneshot.html#imp-function-py-for-grid-search-random-search-bayesian-optimization">imp_function.py for grid search, random search, Bayesian optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="imp_function_oneshot.html#imp-function-py-for-hyperband-and-bayesian-optimization-hyperband">imp_function.py for Hyperband and Bayesian optimization Hyperband</a></li>
+<li class="toctree-l3"><a class="reference internal" href="imp_function_oneshot.html#run-script-file">Run script file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="HPO_sequential.html">HPO (Sequential)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bohb_sequential.html">Bayesian Optimization Hyperband (Sequential)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imp_function_sequential.html">Imported Funcion (Sequential)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="data-analysis">
+<h2>Data Analysis<a class="headerlink" href="#data-analysis" title="Link to this heading"></a></h2>
+<p>Once you generate and acceess the output, you can visualize it to various formats with following methods:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#one-shot-method">One-shot Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#sequential-sampling">Sequential Sampling</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="user-reference">
+<h2>User Reference<a class="headerlink" href="#user-reference" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_reference.html">Additional Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_reference.html#documentations">Documentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_reference.html#papers">Papers</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, CODE Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
